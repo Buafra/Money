@@ -1,0 +1,58 @@
+generator client {
+  provider = "prisma-client-js"
+}
+
+datasource db {
+  provider = "sqlite"
+  url      = env("DATABASE_URL")
+}
+
+model Expense {
+  id          String   @id @default(cuid())
+  createdAt   DateTime @default(now())
+  updatedAt   DateTime @updatedAt
+  amount      Float
+  currency    String   @default("AED")
+  amountAed   Float
+  merchant    String
+  date        DateTime
+  description String?
+  category    String
+  person      String
+  sourceType  String   @default("MANUAL")
+  rawInput    String?
+  items       String?
+  confidence  Float?
+  needsReview Boolean  @default(false)
+
+  @@index([date])
+  @@index([category])
+  @@index([person])
+}
+
+model Budget {
+  id        String   @id @default(cuid())
+  createdAt DateTime @default(now())
+  updatedAt DateTime @updatedAt
+  month     String
+  category  String
+  person    String
+  limitAed  Float
+
+  @@unique([month, category, person])
+}
+
+model RecurringPattern {
+  id           String   @id @default(cuid())
+  createdAt    DateTime @default(now())
+  updatedAt    DateTime @updatedAt
+  merchant     String
+  category     String
+  person       String
+  avgAmountAed Float
+  frequency    String
+  lastSeen     DateTime
+  count        Int      @default(1)
+
+  @@unique([merchant, person])
+}
